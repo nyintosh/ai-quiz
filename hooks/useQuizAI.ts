@@ -37,7 +37,8 @@ export function useQuizAI() {
   const abortRef = useRef<AbortController | null>(null);
 
   const analyze = useCallback(async (base64: string) => {
-    abortRef.current?.abort();
+    if (abortRef.current) return;
+
     const controller = new AbortController();
     abortRef.current = controller;
 

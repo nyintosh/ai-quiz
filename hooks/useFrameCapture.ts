@@ -5,7 +5,8 @@ import { useRef, useCallback } from "react";
 const INTERVAL_MS = 350;
 const DIFF_THRESHOLD = 12;
 const SETTLE_MS = 900;
-const MAX_W = 640;
+const MAX_W = 768;
+const JPEG_QUALITY = 0.72;
 
 function sampleDiff(a: Uint8ClampedArray, b: Uint8ClampedArray): number {
   let total = 0;
@@ -52,7 +53,7 @@ export function useFrameCapture(
     ctx.drawImage(video, 0, 0, w, h);
 
     return {
-      dataUrl: canvas.toDataURL("image/jpeg", 0.75),
+      dataUrl: canvas.toDataURL("image/jpeg", JPEG_QUALITY),
       pixels: ctx.getImageData(0, 0, w, h).data,
     };
   }, [videoRef, canvasRef]);

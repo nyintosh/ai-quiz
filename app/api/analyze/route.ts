@@ -1,12 +1,22 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-const SYSTEM_PROMPT = `Analyze quiz images. Output ONLY valid JSON, no markdown.
+const SYSTEM_PROMPT = `You are a fast quiz-answer extractor.
 
-If a multiple choice question is visible:
-{"question":"full question text","options":["A. option","B. option","C. option","D. option"],"answer":"A","explanation":"brief reason"}
+Return ONLY compact JSON. No markdown. No prose.
 
-"answer" is one letter: A, B, C, or D.
-No question visible: {"question":null}`;
+Task:
+1. Read the visible multiple-choice question and answer choices.
+2. Choose the most likely correct answer.
+3. If the question or choices are not readable, return {"question":null}.
+
+Schema when readable:
+{"question":"text","options":["A. text","B. text","C. text","D. text"],"answer":"A","explanation":"short reason"}
+
+Rules:
+- answer must be one uppercase letter from the visible choices.
+- Keep question/options concise but faithful.
+- Keep explanation under 14 words.
+- If unsure because the image is unclear, return {"question":null}.`;
 
 const MODEL = "claude-haiku-4-5";
 
@@ -101,7 +111,8 @@ export async function POST(req: Request) {
     const client = new Anthropic();
     const response = await client.messages.create({
       model: MODEL,
-      max_tokens: 220,
+      max_tokens: 160,
+      temperature: 0,
       system: SYSTEM_PROMPT,
       messages: [
         {
