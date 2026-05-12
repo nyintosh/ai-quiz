@@ -4,14 +4,14 @@ import { useRef, useCallback } from 'react'
 
 const INTERVAL_MS = 600
 const DIFF_THRESHOLD = 12
-const MOTION_FRAMES = 3
-const COOLDOWN_MS = 3000
-const MAX_W = 800
+const MOTION_FRAMES = 2
+const COOLDOWN_MS = 1500
+const MAX_W = 640
 
 function sampleDiff(a: Uint8ClampedArray, b: Uint8ClampedArray): number {
   let total = 0
   let count = 0
-  for (let i = 0; i < a.length; i += 32) {
+  for (let i = 0; i < a.length; i += 64) {
     total += Math.abs(a[i] - b[i])
     total += Math.abs(a[i + 1] - b[i + 1])
     total += Math.abs(a[i + 2] - b[i + 2])
