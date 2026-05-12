@@ -2,10 +2,9 @@
 
 import { useRef, useCallback } from 'react'
 
-const INTERVAL_MS = 600
+const INTERVAL_MS = 350
 const DIFF_THRESHOLD = 12
-const MOTION_FRAMES = 2
-const COOLDOWN_MS = 1500
+const SETTLE_MS = 900
 const MAX_W = 640
 
 function sampleDiff(a: Uint8ClampedArray, b: Uint8ClampedArray): number {
@@ -24,18 +23,21 @@ export function useFrameCapture(
   videoRef: React.RefObject<HTMLVideoElement | null>,
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   onSignificantChange: (base64: string) => void,
+  onMotion?: () => void,
 ) {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const previousPixels = useRef<Uint8ClampedArray | null>(null)
-  const diffCount = useRef(0)
-  const lastCallAt = useRef(0)
+  const pendingFrame = useRef<string | null>(null)
   const callbackRef = useRef(onSignificantChange)
+  const motionCallbackRef = useRef(onMotion)
   callbackRef.current = onSignificantChange
+  motionCallbackRef.current = onMotion
 
-  const tick = useCallback(() => {
+  const captureFrame = useCallback(() => {
     const video = videoRef.current
     const canvas = canvasRef.current
-    if (!video || !canvas || video.readyState < 2) return
+    if (!video || !canvas || video.readyState < 2) return null
 
     const scale = Math.min(1, MAX_W / video.videoWidth)
     const w = Math.round(video.videoWidth * scale)
@@ -46,51 +48,74 @@ export function useFrameCapture(
     }
 
     const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    if (!ctx) return null
     ctx.drawImage(video, 0, 0, w, h)
 
-    const current = ctx.getImageData(0, 0, w, h).data
-    const now = Date.now()
-
-    if (previousPixels.current && previousPixels.current.length === current.length) {
-      const diff = sampleDiff(current, previousPixels.current)
-      if (diff > DIFF_THRESHOLD) {
-        diffCount.current++
-      } else {
-        diffCount.current = 0
-      }
-
-      if (diffCount.current >= MOTION_FRAMES && now - lastCallAt.current >= COOLDOWN_MS) {
-        diffCount.current = 0
-        lastCallAt.current = now
-        previousPixels.current = new Uint8ClampedArray(current)
-        callbackRef.current(canvas.toDataURL('image/jpeg', 0.75))
-      }
-    } else {
-      previousPixels.current = new Uint8ClampedArray(current)
-      if (now - lastCallAt.current >= COOLDOWN_MS) {
-        lastCallAt.current = now
-        callbackRef.current(canvas.toDataURL('image/jpeg', 0.75))
-      }
+    return {
+      dataUrl: canvas.toDataURL('image/jpeg', 0.75),
+      pixels: ctx.getImageData(0, 0, w, h).data,
     }
   }, [videoRef, canvasRef])
 
+  const clearPending = useCallback(() => {
+    if (settleTimerRef.current) {
+      clearTimeout(settleTimerRef.current)
+      settleTimerRef.current = null
+    }
+    pendingFrame.current = null
+  }, [])
+
+  const queueSettledFrame = useCallback((dataUrl: string) => {
+    pendingFrame.current = dataUrl
+    if (settleTimerRef.current) clearTimeout(settleTimerRef.current)
+    settleTimerRef.current = setTimeout(() => {
+      const latest = pendingFrame.current
+      pendingFrame.current = null
+      settleTimerRef.current = null
+      if (latest) callbackRef.current(latest)
+    }, SETTLE_MS)
+  }, [])
+
+  const captureNow = useCallback(() => {
+    const frame = captureFrame()
+    if (!frame) return
+    clearPending()
+    previousPixels.current = new Uint8ClampedArray(frame.pixels)
+    callbackRef.current(frame.dataUrl)
+  }, [captureFrame, clearPending])
+
+  const tick = useCallback(() => {
+    const frame = captureFrame()
+    if (!frame) return
+
+    const current = frame.pixels
+    if (previousPixels.current && previousPixels.current.length === current.length) {
+      const diff = sampleDiff(current, previousPixels.current)
+      if (diff > DIFF_THRESHOLD) {
+        previousPixels.current = new Uint8ClampedArray(current)
+        motionCallbackRef.current?.()
+        queueSettledFrame(frame.dataUrl)
+      }
+    } else {
+      previousPixels.current = new Uint8ClampedArray(current)
+    }
+  }, [captureFrame, queueSettledFrame])
+
   const start = useCallback(() => {
     if (intervalRef.current) return
+    clearPending()
     previousPixels.current = null
-    diffCount.current = 0
-    lastCallAt.current = 0
     intervalRef.current = setInterval(tick, INTERVAL_MS)
-  }, [tick])
+  }, [clearPending, tick])
 
   const stop = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current)
       intervalRef.current = null
     }
+    clearPending()
     previousPixels.current = null
-    diffCount.current = 0
-  }, [])
+  }, [clearPending])
 
-  return { start, stop }
+  return { start, stop, captureNow }
 }

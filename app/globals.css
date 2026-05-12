@@ -9,3 +9,52 @@ body,
   background: #0f172a;
   color: #f8fafc;
 }
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.glass-control {
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08)),
+    rgba(10, 12, 18, 0.38);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.28),
+    0 16px 34px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(22px) saturate(1.35);
+}
+
+.glass-panel {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08) 42%, rgba(10, 12, 18, 0.64)),
+    rgba(12, 14, 20, 0.58);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 24px 70px rgba(0, 0, 0, 0.46);
+  backdrop-filter: blur(28px) saturate(1.35);
+}
+
+.glass-segment {
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.42),
+    0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.shutter-button {
+  background:
+    radial-gradient(circle at 50% 32%, rgba(255, 255, 255, 1), rgba(238, 241, 245, 0.94) 42%, rgba(181, 190, 202, 0.96) 100%);
+  box-shadow:
+    inset 0 4px 7px rgba(255, 255, 255, 0.9),
+    inset 0 -8px 12px rgba(88, 96, 111, 0.34),
+    0 18px 42px rgba(0, 0, 0, 0.46);
+}
+
+.answer-option {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22);
+}

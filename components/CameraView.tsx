@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useCamera } from '@/hooks/useCamera'
 import { useFrameCapture } from '@/hooks/useFrameCapture'
 import type { QuizStatus } from '@/hooks/useQuizAI'
@@ -11,19 +11,34 @@ interface Props {
   onDismiss: () => void
 }
 
-function cornerColor(status: QuizStatus): string {
-  switch (status) {
-    case 'processing': return 'border-amber-400'
-    case 'answered':   return 'border-emerald-400'
-    case 'error':      return 'border-red-400'
-    default:           return 'border-white/70'
-  }
+const statusText: Record<QuizStatus, string> = {
+  idle: 'Frame a question',
+  processing: 'Reading',
+  answered: 'Answer ready',
+  error: 'Move closer',
+  'no-question': 'No question',
 }
 
 export default function CameraView({ onFrame, status, onDismiss }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const { videoRef, isReady, error, startCamera, toggleCamera } = useCamera()
-  const { start, stop } = useFrameCapture(videoRef, canvasRef, onFrame)
+  const [autoScan, setAutoScan] = useState(false)
+  const { videoRef, isReady, error, startCamera } = useCamera()
+
+  const dismissTransientResult = useCallback(() => {
+    if (status === 'error' || status === 'no-question') onDismiss()
+  }, [onDismiss, status])
+
+  const analyzeFrame = useCallback((base64: string) => {
+    if (status === 'error' || status === 'no-question') onDismiss()
+    onFrame(base64)
+  }, [onDismiss, onFrame, status])
+
+  const { start, stop, captureNow } = useFrameCapture(
+    videoRef,
+    canvasRef,
+    analyzeFrame,
+    dismissTransientResult,
+  )
 
   useEffect(() => {
     startCamera()
@@ -31,100 +46,102 @@ export default function CameraView({ onFrame, status, onDismiss }: Props) {
   }, [])
 
   useEffect(() => {
-    if (isReady) {
+    const shouldAutoScan = isReady && autoScan && status !== 'processing' && status !== 'answered'
+    if (shouldAutoScan) {
       start()
     } else {
       stop()
     }
     return stop
-  }, [isReady, start, stop])
+  }, [autoScan, isReady, start, status, stop])
 
-  const color = cornerColor(status)
-  const pulse = status === 'idle' ? 'animate-pulse' : ''
-  const panelOpen = status === 'answered' || status === 'error' || status === 'no-question' || status === 'processing'
+  const scanNow = () => {
+    dismissTransientResult()
+    captureNow()
+  }
+
+  const canScan = isReady && status !== 'processing'
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
-      {/* Error state */}
+    <div className="fixed inset-0 overflow-hidden bg-[#07080b] text-white">
       {error && (
-        <div className="flex flex-col items-center gap-4 px-8 text-center">
-          <svg className="size-12 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-            <line x1="1" y1="1" x2="23" y2="23"/>
-          </svg>
-          <p className="text-sm text-red-400 max-w-xs leading-relaxed">{error}</p>
-          <button
-            onClick={() => startCamera()}
-            className="rounded-full bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white active:bg-blue-600"
-          >
-            Retry
-          </button>
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-5 px-8 text-center">
+          <div className="glass-panel flex max-w-sm flex-col items-center gap-4 rounded-[28px] px-6 py-7">
+            <div className="flex size-14 items-center justify-center rounded-full bg-white/15 shadow-inner">
+              <svg className="size-7 text-white/85" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </div>
+            <p className="text-sm font-medium leading-relaxed text-white/78">{error}</p>
+            <button
+              onClick={() => startCamera()}
+              className="h-11 rounded-full bg-white px-6 text-sm font-bold text-black shadow-lg active:scale-[.98]"
+            >
+              Retry camera
+            </button>
+          </div>
         </div>
       )}
 
-      {/* Loading */}
       {!isReady && !error && (
-        <div className="flex flex-col items-center gap-4 text-slate-400">
-          <div className="size-9 animate-spin rounded-full border-[3px] border-white/15 border-t-white" />
-          <p className="text-sm">Starting camera…</p>
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 text-white/70">
+          <div className="size-9 animate-spin rounded-full border-2 border-white/15 border-t-white" />
+          <p className="text-sm font-semibold">Starting camera</p>
         </div>
       )}
 
-      {/* Video feed */}
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <video
         ref={videoRef}
-        className={`h-full w-full object-cover ${isReady ? 'opacity-100' : 'opacity-0'}`}
+        className={`h-full w-full object-cover transition-opacity duration-300 ${isReady ? 'opacity-100' : 'opacity-0'}`}
         autoPlay
         playsInline
         muted
       />
 
-      {/* Tap-to-dismiss overlay (camera area only) */}
-      {panelOpen && (
-        <button
-          onClick={onDismiss}
-          aria-label="Scan next question"
-          className="absolute inset-x-0 top-0 bottom-[58dvh] cursor-pointer"
-        />
-      )}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,transparent_0,transparent_35%,rgba(0,0,0,.28)_64%,rgba(0,0,0,.76)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,.58),transparent_22%,transparent_62%,rgba(0,0,0,.76))]" />
 
-      {/* Viewfinder corners */}
       {isReady && (
-        <div className="pointer-events-none absolute inset-0">
-          <span className={`absolute left-6 top-14 size-6 border-l-2 border-t-2 rounded-tl transition-colors duration-300 ${color} ${pulse}`} />
-          <span className={`absolute right-6 top-14 size-6 border-r-2 border-t-2 rounded-tr transition-colors duration-300 ${color} ${pulse}`} />
-          <span className={`absolute bottom-[calc(58dvh+16px)] left-6 size-6 border-b-2 border-l-2 rounded-bl transition-colors duration-300 ${color} ${pulse}`} />
-          <span className={`absolute bottom-[calc(58dvh+16px)] right-6 size-6 border-b-2 border-r-2 rounded-br transition-colors duration-300 ${color} ${pulse}`} />
-        </div>
+        <>
+          <p className="absolute inset-x-6 top-[max(18px,env(safe-area-inset-top))] text-center text-sm font-bold tracking-wide text-white/82 drop-shadow lg:right-[420px]">
+            {statusText[status]}
+          </p>
+
+          <div className="pointer-events-none absolute inset-x-5 top-[13dvh] h-[43dvh] rounded-[32px] border border-white/30 bg-white/[0.03] shadow-[inset_0_1px_0_rgba(255,255,255,.2),inset_0_-1px_0_rgba(0,0,0,.34),0_0_0_999px_rgba(0,0,0,.12)] backdrop-blur-[1px] lg:right-[440px] lg:top-[17dvh] lg:h-[58dvh]" />
+          <div className="pointer-events-none absolute left-1/2 top-[calc(13dvh+10px)] h-1 w-16 -translate-x-1/2 rounded-full bg-white/45 lg:top-[calc(17dvh+10px)] lg:-translate-x-[calc(50%+210px)]" />
+
+          <div className="absolute inset-x-0 bottom-[calc(52dvh+18px)] flex flex-col items-center gap-4 px-5 lg:bottom-8 lg:right-[420px]">
+            {!autoScan && (
+              <button
+                onClick={scanNow}
+                disabled={!canScan}
+                className="shutter-button flex size-[76px] items-center justify-center rounded-full active:scale-[.97] disabled:opacity-60"
+                aria-label="Scan question"
+              >
+                <span className="size-[54px] rounded-full border border-black/20 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.9),rgba(255,255,255,.2)_48%,rgba(0,0,0,.12)_100%)] shadow-[inset_0_2px_6px_rgba(255,255,255,.8),inset_0_-5px_9px_rgba(0,0,0,.18)]" />
+              </button>
+            )}
+
+            <div className="glass-control glass-segment flex rounded-full p-1">
+              <button
+                onClick={() => setAutoScan(false)}
+                className={`h-10 rounded-full px-5 text-sm font-bold transition ${!autoScan ? 'bg-white text-black shadow-[0_8px_18px_rgba(0,0,0,.24)]' : 'text-white/72'}`}
+              >
+                Manual
+              </button>
+              <button
+                onClick={() => setAutoScan(true)}
+                className={`h-10 rounded-full px-5 text-sm font-bold transition ${autoScan ? 'bg-white text-black shadow-[0_8px_18px_rgba(0,0,0,.24)]' : 'text-white/72'}`}
+              >
+                Auto
+              </button>
+            </div>
+          </div>
+        </>
       )}
 
-      {/* Camera flip button */}
-      {isReady && (
-        <div className="absolute right-4 top-[max(16px,env(safe-area-inset-top))]">
-          <button
-            onClick={toggleCamera}
-            aria-label="Flip camera"
-            className="flex size-11 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-md active:bg-black/70"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-              <circle cx="12" cy="13" r="4"/>
-            </svg>
-          </button>
-        </div>
-      )}
-
-      {/* Scan-next hint */}
-      {panelOpen && (
-        <div className="pointer-events-none absolute bottom-[calc(58dvh+32px)] inset-x-0 flex justify-center">
-          <span className="rounded-full bg-black/50 px-3 py-1 text-[11px] text-white/60 backdrop-blur-sm">
-            Tap to scan next
-          </span>
-        </div>
-      )}
-
-      {/* Hidden canvas for pixel capture */}
       <canvas ref={canvasRef} className="hidden" />
     </div>
   )
