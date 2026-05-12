@@ -1,66 +1,72 @@
-'use client'
+"use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useCamera } from '@/hooks/useCamera'
-import { useFrameCapture } from '@/hooks/useFrameCapture'
-import type { QuizStatus } from '@/hooks/useQuizAI'
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useCamera } from "@/hooks/useCamera";
+import { useFrameCapture } from "@/hooks/useFrameCapture";
+import type { QuizStatus } from "@/hooks/useQuizAI";
 
 interface Props {
-  onFrame: (base64: string) => void
-  status: QuizStatus
-  onDismiss: () => void
+  onFrame: (base64: string) => void;
+  status: QuizStatus;
+  onDismiss: () => void;
 }
 
 const statusText: Record<QuizStatus, string> = {
-  idle: 'Frame a question',
-  processing: 'Reading',
-  answered: 'Answer ready',
-  error: 'Move closer',
-  'no-question': 'No question',
-}
+  idle: "Frame a question",
+  processing: "Reading",
+  answered: "Answer ready",
+  error: "Move closer",
+  "no-question": "No question",
+};
 
 export default function CameraView({ onFrame, status, onDismiss }: Props) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const [autoScan, setAutoScan] = useState(false)
-  const { videoRef, isReady, error, startCamera } = useCamera()
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [autoScan, setAutoScan] = useState(false);
+  const { videoRef, isReady, error, startCamera } = useCamera();
 
   const dismissTransientResult = useCallback(() => {
-    if (status === 'error' || status === 'no-question') onDismiss()
-  }, [onDismiss, status])
+    if (status === "error" || status === "no-question") onDismiss();
+  }, [onDismiss, status]);
 
-  const analyzeFrame = useCallback((base64: string) => {
-    if (status === 'error' || status === 'no-question') onDismiss()
-    onFrame(base64)
-  }, [onDismiss, onFrame, status])
+  const analyzeFrame = useCallback(
+    (base64: string) => {
+      if (status === "error" || status === "no-question") onDismiss();
+      onFrame(base64);
+    },
+    [onDismiss, onFrame, status],
+  );
 
   const { start, stop, captureNow } = useFrameCapture(
     videoRef,
     canvasRef,
     analyzeFrame,
     dismissTransientResult,
-  )
+  );
 
   useEffect(() => {
-    startCamera()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    startCamera();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    const shouldAutoScan = isReady && autoScan && status !== 'processing' && status !== 'answered'
+    const shouldAutoScan =
+      isReady && autoScan && status !== "processing" && status !== "answered";
+
     if (shouldAutoScan) {
-      start()
+      start();
     } else {
-      stop()
+      stop();
     }
-    return stop
-  }, [autoScan, isReady, start, status, stop])
+
+    return stop;
+  }, [autoScan, isReady, start, status, stop]);
 
   const scanNow = () => {
-    dismissTransientResult()
-    captureNow()
-  }
+    dismissTransientResult();
+    captureNow();
+  };
 
-  const canScan = isReady && status !== 'processing'
+  const canScan = isReady && status !== "processing";
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-[#07080b] text-white">
@@ -68,12 +74,22 @@ export default function CameraView({ onFrame, status, onDismiss }: Props) {
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-5 px-8 text-center">
           <div className="glass-panel flex max-w-sm flex-col items-center gap-4 rounded-[28px] px-6 py-7">
             <div className="flex size-14 items-center justify-center rounded-full bg-white/15 shadow-inner">
-              <svg className="size-7 text-white/85" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                <line x1="1" y1="1" x2="23" y2="23"/>
+              <svg
+                className="size-7 text-white/85"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <line x1="1" y1="1" x2="23" y2="23" />
               </svg>
             </div>
-            <p className="text-sm font-medium leading-relaxed text-white/78">{error}</p>
+            <p className="text-sm font-medium leading-relaxed text-white/78">
+              {error}
+            </p>
             <button
               onClick={() => startCamera()}
               className="h-11 rounded-full bg-white px-6 text-sm font-bold text-black shadow-lg active:scale-[.98]"
@@ -94,7 +110,7 @@ export default function CameraView({ onFrame, status, onDismiss }: Props) {
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <video
         ref={videoRef}
-        className={`h-full w-full object-cover transition-opacity duration-300 ${isReady ? 'opacity-100' : 'opacity-0'}`}
+        className={`h-full w-full object-cover transition-opacity duration-300 ${isReady ? "opacity-100" : "opacity-0"}`}
         autoPlay
         playsInline
         muted
@@ -105,44 +121,45 @@ export default function CameraView({ onFrame, status, onDismiss }: Props) {
 
       {isReady && (
         <>
-          <p className="absolute inset-x-6 top-[max(18px,env(safe-area-inset-top))] text-center text-sm font-bold tracking-wide text-white/82 drop-shadow lg:right-[420px]">
+          <p className="absolute inset-x-6 top-[max(18px,env(safe-area-inset-top))] text-center text-[13px] font-semibold tracking-normal text-white/78 drop-shadow transition-opacity duration-200 lg:right-[392px]">
             {statusText[status]}
           </p>
 
-          <div className="pointer-events-none absolute inset-x-5 top-[13dvh] h-[43dvh] rounded-[32px] border border-white/30 bg-white/[0.03] shadow-[inset_0_1px_0_rgba(255,255,255,.2),inset_0_-1px_0_rgba(0,0,0,.34),0_0_0_999px_rgba(0,0,0,.12)] backdrop-blur-[1px] lg:right-[440px] lg:top-[17dvh] lg:h-[58dvh]" />
-          <div className="pointer-events-none absolute left-1/2 top-[calc(13dvh+10px)] h-1 w-16 -translate-x-1/2 rounded-full bg-white/45 lg:top-[calc(17dvh+10px)] lg:-translate-x-[calc(50%+210px)]" />
+          <div className="pointer-events-none absolute inset-x-5 top-[13dvh] h-[43dvh] rounded-[26px] border border-white/26 bg-white/[0.012] shadow-[inset_0_1px_0_rgba(255,255,255,.2),inset_0_-1px_0_rgba(0,0,0,.28),0_0_0_999px_rgba(0,0,0,.12)] lg:left-8 lg:right-[392px] lg:top-[17dvh] lg:h-[58dvh]" />
 
-          <div className="absolute inset-x-0 bottom-[calc(52dvh+18px)] flex flex-col items-center gap-4 px-5 lg:bottom-8 lg:right-[420px]">
-            {!autoScan && (
-              <button
-                onClick={scanNow}
-                disabled={!canScan}
-                className="shutter-button flex size-[76px] items-center justify-center rounded-full active:scale-[.97] disabled:opacity-60"
-                aria-label="Scan question"
-              >
-                <span className="size-[54px] rounded-full border border-black/20 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.9),rgba(255,255,255,.2)_48%,rgba(0,0,0,.12)_100%)] shadow-[inset_0_2px_6px_rgba(255,255,255,.8),inset_0_-5px_9px_rgba(0,0,0,.18)]" />
-              </button>
-            )}
-
-            <div className="glass-control glass-segment flex rounded-full p-1">
+          <div className="control-rise absolute inset-x-0 top-[calc(56dvh-60px)] z-10 flex justify-center px-5 lg:left-8 lg:right-[392px] lg:top-[calc(75dvh-60px)]">
+            <div className="glass-control glass-segment flex rounded-full p-0.5">
               <button
                 onClick={() => setAutoScan(false)}
-                className={`h-10 rounded-full px-5 text-sm font-bold transition ${!autoScan ? 'bg-white text-black shadow-[0_8px_18px_rgba(0,0,0,.24)]' : 'text-white/72'}`}
+                className={`h-8 rounded-full px-4 text-[12px] font-semibold transition-all duration-200 ${!autoScan ? "bg-white text-black shadow-[0_6px_14px_rgba(0,0,0,.22)]" : "text-white/70"}`}
               >
                 Manual
               </button>
               <button
                 onClick={() => setAutoScan(true)}
-                className={`h-10 rounded-full px-5 text-sm font-bold transition ${autoScan ? 'bg-white text-black shadow-[0_8px_18px_rgba(0,0,0,.24)]' : 'text-white/72'}`}
+                className={`h-8 rounded-full px-4 text-[12px] font-semibold transition-all duration-200 ${autoScan ? "bg-white text-black shadow-[0_6px_14px_rgba(0,0,0,.22)]" : "text-white/70"}`}
               >
                 Auto
               </button>
             </div>
+          </div>
+
+          <div className="absolute inset-x-0 top-[calc(56dvh+18px)] z-10 flex justify-center px-5 lg:left-8 lg:right-[392px] lg:top-[calc(75dvh+18px)]">
+            {!autoScan && (
+              <button
+                onClick={scanNow}
+                disabled={!canScan}
+                className="control-rise shutter-button flex size-14 items-center justify-center rounded-full active:scale-[.97] disabled:opacity-60"
+                aria-label="Scan question"
+              >
+                <span className="size-9 rounded-full border border-black/20 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.9),rgba(255,255,255,.2)_48%,rgba(0,0,0,.12)_100%)] shadow-[inset_0_2px_6px_rgba(255,255,255,.8),inset_0_-5px_9px_rgba(0,0,0,.18)]" />
+              </button>
+            )}
           </div>
         </>
       )}
 
       <canvas ref={canvasRef} className="hidden" />
     </div>
-  )
+  );
 }
