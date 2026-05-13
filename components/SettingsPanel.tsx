@@ -16,7 +16,13 @@ interface Props {
   onDismiss?: () => void;
 }
 
-const PROVIDERS: { id: Provider; label: string; color: string; keyHint: string; keyUrl: string }[] = [
+const PROVIDERS: {
+  id: Provider;
+  label: string;
+  color: string;
+  keyHint: string;
+  keyUrl: string;
+}[] = [
   {
     id: "anthropic",
     label: "Anthropic",
@@ -69,7 +75,9 @@ export default function SettingsPanel({
 }: Props) {
   // In first-run: activeProvider is the provider being set up (defaults to config.provider)
   // In settings: activeProvider is the provider tab currently shown
-  const [activeProvider, setActiveProvider] = useState<Provider>(config.provider);
+  const [activeProvider, setActiveProvider] = useState<Provider>(
+    config.provider,
+  );
   const [inputValue, setInputValue] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [keyError, setKeyError] = useState<string | null>(null);
@@ -107,9 +115,8 @@ export default function SettingsPanel({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/65 backdrop-blur-sm sm:items-center">
-      <div className="glass-panel sheet-rise w-full max-w-sm rounded-t-[32px] sm:rounded-[28px] flex flex-col max-h-[92dvh] overflow-hidden">
+      <div className="glass-panel sheet-rise w-full max-w-sm rounded-t-4xl sm:rounded-[28px] flex flex-col max-h-[92dvh] overflow-hidden">
         <div className="overflow-y-auto px-6 pt-6 pb-[max(28px,env(safe-area-inset-bottom))] sm:pb-7 flex flex-col gap-5">
-
           {/* Header */}
           {hasExistingKey ? (
             <div className="flex items-center justify-between">
@@ -119,7 +126,14 @@ export default function SettingsPanel({
                 aria-label="Close settings"
                 className="glass-control flex size-9 items-center justify-center rounded-full"
               >
-                <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <svg
+                  className="size-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                >
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
@@ -128,14 +142,25 @@ export default function SettingsPanel({
           ) : (
             <div className="flex flex-col items-center gap-2 text-center">
               <div className="flex size-14 items-center justify-center rounded-full bg-white/12">
-                <svg className="size-7 text-white/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  className="size-7 text-white/80"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
               </div>
-              <h2 className="text-[18px] font-black">Connect your AI provider</h2>
-              <p className="text-[12px] leading-relaxed text-white/55 max-w-[260px]">
-                Your key is encrypted on this device only and sent exclusively to the chosen provider.
+              <h2 className="text-[18px] font-black">
+                Connect your AI provider
+              </h2>
+              <p className="text-[12px] leading-relaxed text-white/55 max-w-65">
+                Your key is encrypted on this device only and sent exclusively
+                to the chosen provider.
               </p>
             </div>
           )}
@@ -181,20 +206,25 @@ export default function SettingsPanel({
             </div>
 
             {currentKey && (
-              <p className="text-[12px] font-mono text-white/50 bg-white/[0.06] rounded-xl px-3 py-2">
+              <p className="text-[12px] font-mono text-white/50 bg-white/6 rounded-xl px-3 py-2">
                 {maskKey(currentKey)}
               </p>
             )}
 
             <input
               value={inputValue}
-              onChange={(e) => { setInputValue(e.target.value); setKeyError(null); }}
-              placeholder={currentKey ? "Enter new key to replace" : providerMeta.keyHint}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+                setKeyError(null);
+              }}
+              placeholder={
+                currentKey ? "Enter new key to replace" : providerMeta.keyHint
+              }
               type="text"
               autoComplete="off"
               autoCorrect="off"
               spellCheck={false}
-              className="w-full rounded-2xl border border-white/22 bg-white/[0.07] px-4 py-3 font-mono text-[12px] text-white placeholder:text-white/28 outline-none focus:border-white/40 focus:bg-white/[0.10] transition-colors"
+              className="w-full rounded-2xl border border-white/22 bg-white/[0.07] px-4 py-3 font-mono text-[12px] text-white placeholder:text-white/28 outline-none focus:border-white/40 focus:bg-white/10 transition-colors"
             />
 
             {keyError && (
@@ -235,30 +265,48 @@ export default function SettingsPanel({
               </p>
               <div className="flex flex-col gap-1.5">
                 {PROVIDER_MODELS[activeProvider].map((m) => {
-                  const active = config.provider === activeProvider && config.model === m.id;
+                  const active =
+                    config.provider === activeProvider && config.model === m.id;
                   return (
                     <button
                       key={m.id}
-                      onClick={() => onUpdateConfig({ provider: activeProvider, model: m.id })}
+                      onClick={() =>
+                        onUpdateConfig({
+                          provider: activeProvider,
+                          model: m.id,
+                        })
+                      }
                       className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-colors ${
                         active
                           ? "border-white/28 bg-white/14"
-                          : "border-white/10 bg-white/[0.05]"
+                          : "border-white/10 bg-white/5"
                       }`}
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-[13px] font-bold text-white">{m.label}</span>
+                          <span className="text-[13px] font-bold text-white">
+                            {m.label}
+                          </span>
                           {m.recommended && (
                             <span className="rounded-full bg-emerald-400/22 px-2 py-0.5 text-[10px] font-bold text-emerald-300">
                               Recommended
                             </span>
                           )}
                         </div>
-                        <p className="mt-0.5 text-[11px] text-white/50">{m.note}</p>
+                        <p className="mt-0.5 text-[11px] text-white/50">
+                          {m.note}
+                        </p>
                       </div>
                       {active && (
-                        <svg className="size-4 shrink-0 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          className="size-4 shrink-0 text-white"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
                       )}
@@ -295,7 +343,6 @@ export default function SettingsPanel({
               </p>
             </div>
           )}
-
         </div>
       </div>
     </div>

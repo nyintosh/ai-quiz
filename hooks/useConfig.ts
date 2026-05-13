@@ -133,8 +133,7 @@ export function useConfig() {
       // Reset model to recommended when provider changes
       if (patch.provider && patch.provider !== prev.provider) {
         const models = PROVIDER_MODELS[patch.provider];
-        next.model =
-          models.find((m) => m.recommended)?.id ?? models[0].id;
+        next.model = models.find((m) => m.recommended)?.id ?? models[0].id;
       }
       localStorage.setItem(CONFIG_STORAGE, JSON.stringify(next));
       return next;

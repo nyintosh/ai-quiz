@@ -103,10 +103,7 @@ export function useApiKeys() {
     const trimmed = key.trim();
     const wk = await getOrCreateWrappingKey();
     const payload = await encryptValue(trimmed, wk);
-    localStorage.setItem(
-      `${KEY_PREFIX}${provider}`,
-      JSON.stringify(payload),
-    );
+    localStorage.setItem(`${KEY_PREFIX}${provider}`, JSON.stringify(payload));
     setKeys((prev) => ({ ...prev, [provider]: trimmed }));
   }, []);
 

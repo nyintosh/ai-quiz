@@ -22,18 +22,34 @@ const statusText: Record<QuizStatus, string> = {
   "invalid-key": "Invalid key",
 };
 
-export default function CameraView({ onFrame, status, onDismiss, onSettings, captureConfig }: Props) {
+export default function CameraView({
+  onFrame,
+  status,
+  onDismiss,
+  onSettings,
+  captureConfig,
+}: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [autoScan, setAutoScan] = useState(false);
   const { videoRef, isReady, error, startCamera } = useCamera();
 
   const dismissTransientResult = useCallback(() => {
-    if (status === "error" || status === "no-question" || status === "invalid-key") onDismiss();
+    if (
+      status === "error" ||
+      status === "no-question" ||
+      status === "invalid-key"
+    )
+      onDismiss();
   }, [onDismiss, status]);
 
   const analyzeFrame = useCallback(
     (base64: string) => {
-      if (status === "error" || status === "no-question" || status === "invalid-key") onDismiss();
+      if (
+        status === "error" ||
+        status === "no-question" ||
+        status === "invalid-key"
+      )
+        onDismiss();
       onFrame(base64);
     },
     [onDismiss, onFrame, status],
@@ -125,13 +141,21 @@ export default function CameraView({ onFrame, status, onDismiss, onSettings, cap
 
       {isReady && (
         <>
-          <div className="absolute inset-x-0 top-[max(18px,env(safe-area-inset-top))] flex items-center px-4 lg:right-[392px]">
+          <div className="absolute inset-x-0 top-[max(18px,env(safe-area-inset-top))] flex items-center px-4 lg:right-98">
             <button
               onClick={onSettings}
               aria-label="Open settings"
               className="glass-control flex size-8 shrink-0 items-center justify-center rounded-full"
             >
-              <svg className="size-4 text-white/78" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                className="size-4 text-white/78"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
@@ -142,9 +166,9 @@ export default function CameraView({ onFrame, status, onDismiss, onSettings, cap
             <div className="size-8 shrink-0" />
           </div>
 
-          <div className="pointer-events-none absolute inset-x-5 top-[13dvh] h-[43dvh] rounded-[26px] border border-white/26 bg-white/[0.012] shadow-[inset_0_1px_0_rgba(255,255,255,.2),inset_0_-1px_0_rgba(0,0,0,.28),0_0_0_999px_rgba(0,0,0,.12)] lg:left-8 lg:right-[392px] lg:top-[17dvh] lg:h-[58dvh]" />
+          <div className="pointer-events-none absolute inset-x-5 top-[13dvh] h-[43dvh] rounded-[26px] border border-white/26 bg-white/[0.012] shadow-[inset_0_1px_0_rgba(255,255,255,.2),inset_0_-1px_0_rgba(0,0,0,.28),0_0_0_999px_rgba(0,0,0,.12)] lg:left-8 lg:right-98 lg:top-[17dvh] lg:h-[58dvh]" />
 
-          <div className="control-rise absolute inset-x-0 top-[calc(56dvh-60px)] z-10 flex justify-center px-5 lg:left-8 lg:right-[392px] lg:top-[calc(75dvh-60px)]">
+          <div className="control-rise absolute inset-x-0 top-[calc(56dvh-60px)] z-10 flex justify-center px-5 lg:left-8 lg:right-98 lg:top-[calc(75dvh-60px)]">
             <div className="glass-control glass-segment flex rounded-full p-0.5">
               <button
                 onClick={() => setAutoScan(false)}
@@ -161,7 +185,7 @@ export default function CameraView({ onFrame, status, onDismiss, onSettings, cap
             </div>
           </div>
 
-          <div className="absolute inset-x-0 top-[calc(56dvh+18px)] z-10 flex justify-center px-5 lg:left-8 lg:right-[392px] lg:top-[calc(75dvh+18px)]">
+          <div className="absolute inset-x-0 top-[calc(56dvh+18px)] z-10 flex justify-center px-5 lg:left-8 lg:right-98 lg:top-[calc(75dvh+18px)]">
             {!autoScan && (
               <button
                 onClick={scanNow}

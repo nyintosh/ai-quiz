@@ -1,6 +1,11 @@
-import Anthropic, { AuthenticationError as AnthropicAuthError } from "@anthropic-ai/sdk";
+import Anthropic, {
+  AuthenticationError as AnthropicAuthError,
+} from "@anthropic-ai/sdk";
 import OpenAI from "openai";
-import { GoogleGenerativeAI, GoogleGenerativeAIError } from "@google/generative-ai";
+import {
+  GoogleGenerativeAI,
+  GoogleGenerativeAIError,
+} from "@google/generative-ai";
 
 const SYSTEM_PROMPT = `You are a fast quiz-answer extractor.
 
@@ -23,7 +28,11 @@ Rules:
 type Provider = "anthropic" | "google" | "openai";
 
 const ALLOWED_MODELS: Record<Provider, Set<string>> = {
-  anthropic: new Set(["claude-haiku-4-5", "claude-sonnet-4-6", "claude-opus-4-7"]),
+  anthropic: new Set([
+    "claude-haiku-4-5",
+    "claude-sonnet-4-6",
+    "claude-opus-4-7",
+  ]),
   google: new Set(["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"]),
   openai: new Set(["gpt-4o-mini", "gpt-4o"]),
 };
@@ -113,7 +122,11 @@ async function analyzeWithAnthropic(
         content: [
           {
             type: "image",
-            source: { type: "base64", media_type: img.mediaType, data: img.base64Data },
+            source: {
+              type: "base64",
+              media_type: img.mediaType,
+              data: img.base64Data,
+            },
           },
         ],
       },
@@ -206,13 +219,15 @@ export async function POST(req: Request) {
     return Response.json({ error: "Invalid image data" }, { status: 400 });
   }
 
-  const providerRaw = isRecord(body) && typeof body.provider === "string" ? body.provider : null;
+  const providerRaw =
+    isRecord(body) && typeof body.provider === "string" ? body.provider : null;
   const provider: Provider =
     providerRaw && providerRaw in ALLOWED_MODELS
       ? (providerRaw as Provider)
       : "anthropic";
 
-  const modelRaw = isRecord(body) && typeof body.model === "string" ? body.model : null;
+  const modelRaw =
+    isRecord(body) && typeof body.model === "string" ? body.model : null;
   const allowedForProvider = ALLOWED_MODELS[provider];
   const model =
     modelRaw && allowedForProvider.has(modelRaw)
@@ -236,7 +251,10 @@ export async function POST(req: Request) {
     }
 
     if (!result) {
-      return Response.json({ error: "Unexpected AI response" }, { status: 502 });
+      return Response.json(
+        { error: "Unexpected AI response" },
+        { status: 502 },
+      );
     }
     return Response.json(result);
   } catch (e) {

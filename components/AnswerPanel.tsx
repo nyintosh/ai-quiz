@@ -25,7 +25,7 @@ export default function AnswerPanel({ result, status, onDismiss }: Props) {
   return (
     <section
       aria-label="Answer"
-      className={`glass-panel fixed inset-x-0 bottom-0 z-30 max-h-[64dvh] overflow-y-auto overscroll-contain rounded-t-[20px] px-4 pb-[calc(78px+env(safe-area-inset-bottom))] text-white touch-pan-y lg:inset-y-8 lg:left-auto lg:right-8 lg:max-h-none lg:w-[336px] lg:rounded-[20px] lg:px-4 lg:pb-20 ${show ? "translate-y-0 opacity-100 lg:translate-x-0" : "translate-y-[calc(100%+16px)] opacity-0 lg:translate-x-[calc(100%+16px)] lg:translate-y-0"}`}
+      className={`glass-panel fixed inset-x-0 bottom-0 z-30 max-h-[64dvh] overflow-y-auto overscroll-contain rounded-t-[20px] px-4 pb-[calc(78px+env(safe-area-inset-bottom))] text-white touch-pan-y lg:inset-y-8 lg:left-auto lg:right-8 lg:max-h-none lg:w-84 lg:rounded-[20px] lg:px-4 lg:pb-20 ${show ? "translate-y-0 opacity-100 lg:translate-x-0" : "translate-y-[calc(100%+16px)] opacity-0 lg:translate-x-[calc(100%+16px)] lg:translate-y-0"}`}
     >
       <div className="sticky top-0 z-10 -mx-4 mb-3 bg-[linear-gradient(to_bottom,rgba(20,22,30,.86),rgba(20,22,30,.54)_72%,transparent)] px-4 pb-3 pt-2 backdrop-blur-xl">
         <div className="mx-auto mb-3 h-1 w-9 rounded-full bg-white/26" />
