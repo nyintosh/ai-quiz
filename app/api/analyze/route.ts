@@ -219,8 +219,7 @@ export async function POST(req: Request) {
       ? modelRaw
       : [...allowedForProvider][0];
 
-  const headerKey = req.headers.get("X-Api-Key");
-  const apiKey = headerKey?.trim() || process.env.ANTHROPIC_API_KEY;
+  const apiKey = req.headers.get("X-Api-Key")?.trim();
 
   if (!apiKey) {
     return Response.json({ error: "No API key configured" }, { status: 401 });
