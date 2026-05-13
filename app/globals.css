@@ -5,14 +5,14 @@ html {
     height: 100dvh;
     overflow: hidden;
     overscroll-behavior: none;
-    background: #0f172a;
+    background: #07080b;
 }
 
 body {
     height: 100%;
     overflow: hidden;
     overscroll-behavior: none;
-    background: #0f172a;
+    background: #07080b;
     color: #f8fafc;
     font-family:
         -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",

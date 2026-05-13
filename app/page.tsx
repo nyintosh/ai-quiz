@@ -23,7 +23,7 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <main className="relative h-dvh w-full overflow-hidden bg-[#07080b]">
+      <main className="fixed inset-0 overflow-hidden bg-[#07080b]">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="size-9 animate-spin rounded-full border-2 border-white/15 border-t-white" />
         </div>
@@ -34,7 +34,7 @@ export default function Home() {
   // Show setup screen when the active provider has no key configured
   if (!activeKey) {
     return (
-      <main className="relative h-dvh w-full overflow-hidden bg-[#07080b]">
+      <main className="fixed inset-0 overflow-hidden bg-[#07080b]">
         <SettingsPanel
           hasExistingKey={false}
           keys={keys}
@@ -48,7 +48,7 @@ export default function Home() {
   }
 
   return (
-    <main className="relative h-dvh w-full overflow-hidden">
+    <main className="fixed inset-0 overflow-hidden">
       <CameraView
         onFrame={analyze}
         status={status}
