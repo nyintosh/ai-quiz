@@ -5,8 +5,8 @@ import { useRef, useCallback } from "react";
 const INTERVAL_MS = 350;
 const DIFF_THRESHOLD = 12;
 const SETTLE_MS = 900;
-const MAX_W = 768;
-const JPEG_QUALITY = 0.72;
+
+const DEFAULT_CAPTURE_CONFIG = { maxW: 768, jpegQuality: 0.72 };
 
 function sampleDiff(a: Uint8ClampedArray, b: Uint8ClampedArray): number {
   let total = 0;
@@ -25,6 +25,7 @@ export function useFrameCapture(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   onSignificantChange: (base64: string) => void,
   onMotion?: () => void,
+  captureConfig?: { maxW: number; jpegQuality: number },
 ) {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -32,15 +33,18 @@ export function useFrameCapture(
   const pendingFrame = useRef<string | null>(null);
   const callbackRef = useRef(onSignificantChange);
   const motionCallbackRef = useRef(onMotion);
+  const captureConfigRef = useRef(captureConfig ?? DEFAULT_CAPTURE_CONFIG);
   callbackRef.current = onSignificantChange;
   motionCallbackRef.current = onMotion;
+  captureConfigRef.current = captureConfig ?? DEFAULT_CAPTURE_CONFIG;
 
   const captureFrame = useCallback(() => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     if (!video || !canvas || video.readyState < 2) return null;
 
-    const scale = Math.min(1, MAX_W / video.videoWidth);
+    const { maxW, jpegQuality } = captureConfigRef.current;
+    const scale = Math.min(1, maxW / video.videoWidth);
     const w = Math.round(video.videoWidth * scale);
     const h = Math.round(video.videoHeight * scale);
     if (canvas.width !== w || canvas.height !== h) {
@@ -53,7 +57,7 @@ export function useFrameCapture(
     ctx.drawImage(video, 0, 0, w, h);
 
     return {
-      dataUrl: canvas.toDataURL("image/jpeg", JPEG_QUALITY),
+      dataUrl: canvas.toDataURL("image/jpeg", jpegQuality),
       pixels: ctx.getImageData(0, 0, w, h).data,
     };
   }, [videoRef, canvasRef]);

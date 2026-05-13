@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "Quiz AI",
   },
+  icons: {
+    apple: "/icons/icon-192.png",
+  },
 };
 
 export const viewport: Viewport = {

@@ -68,7 +68,7 @@ export function useCamera() {
       if (requestIdRef.current !== requestId) return;
       setError(e instanceof Error ? e.message : "Camera access denied");
     }
-  }, [stopCamera]);
+  }, []);
 
   useEffect(
     () => () => {
@@ -77,5 +77,5 @@ export function useCamera() {
     [stopCamera],
   );
 
-  return { videoRef, isReady, error, startCamera, stopCamera };
+  return { videoRef, isReady, error, startCamera };
 }

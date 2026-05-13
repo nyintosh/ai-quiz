@@ -9,6 +9,8 @@ interface Props {
   onFrame: (base64: string) => void;
   status: QuizStatus;
   onDismiss: () => void;
+  onSettings: () => void;
+  captureConfig: { maxW: number; jpegQuality: number };
 }
 
 const statusText: Record<QuizStatus, string> = {
@@ -17,20 +19,21 @@ const statusText: Record<QuizStatus, string> = {
   answered: "Answer ready",
   error: "Move closer",
   "no-question": "No question",
+  "invalid-key": "Invalid key",
 };
 
-export default function CameraView({ onFrame, status, onDismiss }: Props) {
+export default function CameraView({ onFrame, status, onDismiss, onSettings, captureConfig }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [autoScan, setAutoScan] = useState(false);
   const { videoRef, isReady, error, startCamera } = useCamera();
 
   const dismissTransientResult = useCallback(() => {
-    if (status === "error" || status === "no-question") onDismiss();
+    if (status === "error" || status === "no-question" || status === "invalid-key") onDismiss();
   }, [onDismiss, status]);
 
   const analyzeFrame = useCallback(
     (base64: string) => {
-      if (status === "error" || status === "no-question") onDismiss();
+      if (status === "error" || status === "no-question" || status === "invalid-key") onDismiss();
       onFrame(base64);
     },
     [onDismiss, onFrame, status],
@@ -41,6 +44,7 @@ export default function CameraView({ onFrame, status, onDismiss }: Props) {
     canvasRef,
     analyzeFrame,
     dismissTransientResult,
+    captureConfig,
   );
 
   useEffect(() => {
@@ -121,9 +125,22 @@ export default function CameraView({ onFrame, status, onDismiss }: Props) {
 
       {isReady && (
         <>
-          <p className="absolute inset-x-6 top-[max(18px,env(safe-area-inset-top))] text-center text-[13px] font-semibold tracking-normal text-white/78 drop-shadow transition-opacity duration-200 lg:right-[392px]">
-            {statusText[status]}
-          </p>
+          <div className="absolute inset-x-0 top-[max(18px,env(safe-area-inset-top))] flex items-center px-4 lg:right-[392px]">
+            <button
+              onClick={onSettings}
+              aria-label="Open settings"
+              className="glass-control flex size-8 shrink-0 items-center justify-center rounded-full"
+            >
+              <svg className="size-4 text-white/78" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+            </button>
+            <p className="flex-1 text-center text-[13px] font-semibold tracking-normal text-white/78 drop-shadow transition-opacity duration-200">
+              {statusText[status]}
+            </p>
+            <div className="size-8 shrink-0" />
+          </div>
 
           <div className="pointer-events-none absolute inset-x-5 top-[13dvh] h-[43dvh] rounded-[26px] border border-white/26 bg-white/[0.012] shadow-[inset_0_1px_0_rgba(255,255,255,.2),inset_0_-1px_0_rgba(0,0,0,.28),0_0_0_999px_rgba(0,0,0,.12)] lg:left-8 lg:right-[392px] lg:top-[17dvh] lg:h-[58dvh]" />
 

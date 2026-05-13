@@ -9,7 +9,6 @@ const withPWA = withPWAInit({
 })
 
 const nextConfig: NextConfig = {
-  // Silence Turbopack/webpack mismatch warning from next-pwa
   turbopack: {},
 }
 

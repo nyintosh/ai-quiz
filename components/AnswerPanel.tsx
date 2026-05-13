@@ -12,7 +12,8 @@ const visible = (status: QuizStatus, result: QuizResult | null) =>
   result !== null ||
   status === "processing" ||
   status === "error" ||
-  status === "no-question";
+  status === "no-question" ||
+  status === "invalid-key";
 
 function optionText(option: string) {
   return option.replace(/^[A-Z][.)]\s*/i, "").trim();
@@ -67,6 +68,12 @@ export default function AnswerPanel({ result, status, onDismiss }: Props) {
       {status === "no-question" && !result && (
         <p className="sheet-rise rounded-2xl border border-white/16 bg-white/12 p-3 text-[13px] font-medium leading-relaxed text-white/78">
           No readable multiple-choice question was found.
+        </p>
+      )}
+
+      {status === "invalid-key" && !result && (
+        <p className="sheet-rise rounded-2xl border border-amber-200/20 bg-amber-400/16 p-3 text-[13px] font-medium leading-relaxed text-amber-50">
+          API key rejected. Tap the lock icon to update your key.
         </p>
       )}
 
