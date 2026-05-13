@@ -84,7 +84,6 @@ export default function SettingsPanel({
 
   const providerMeta = PROVIDERS.find((p) => p.id === activeProvider)!;
   const currentKey = keys[activeProvider];
-  const models = PROVIDER_MODELS[activeProvider];
 
   const handleSaveKey = async () => {
     if (!looksLikeKey(inputValue, activeProvider)) {
@@ -114,18 +113,18 @@ export default function SettingsPanel({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/65 backdrop-blur-sm px-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:items-center sm:px-0 sm:pb-0">
       <div className="glass-panel sheet-rise w-full sm:max-w-sm rounded-[28px] flex flex-col max-h-[92dvh] overflow-hidden">
-        <div className="overflow-y-auto px-6 pt-6 pb-7 flex flex-col gap-5">
-          {/* Header */}
+        {/* Sticky header */}
+        <div className="shrink-0 -mb-px px-6 pt-5 pb-4 bg-[linear-gradient(to_bottom,rgba(20,22,30,.92),rgba(20,22,30,.72)_72%,transparent)] backdrop-blur-xl">
           {hasExistingKey ? (
             <div className="flex items-center justify-between">
               <h2 className="text-[17px] font-black">Settings</h2>
               <button
                 onClick={onDismiss}
                 aria-label="Close settings"
-                className="glass-control flex size-9 items-center justify-center rounded-full"
+                className="glass-control flex size-8 shrink-0 items-center justify-center rounded-full"
               >
                 <svg
-                  className="size-4"
+                  className="size-3.5 text-white/78"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -162,7 +161,10 @@ export default function SettingsPanel({
               </p>
             </div>
           )}
+        </div>
 
+        {/* Scrollable content */}
+        <div className="overflow-y-auto px-6 pt-5 pb-7 flex flex-col gap-5">
           {/* Provider tabs */}
           {(() => {
             const activeIdx = PROVIDERS.findIndex(
@@ -202,13 +204,13 @@ export default function SettingsPanel({
           {/* API Key for active provider */}
           <div className="flex flex-col gap-2.5">
             <div className="flex items-center justify-between">
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-white/42">
+              <p className="text-[11px] font-black uppercase tracking-[0.16em] text-white/42">
                 API Key
               </p>
               {currentKey && (
                 <button
                   onClick={() => onClearKey(activeProvider)}
-                  className="text-[11px] font-semibold text-red-400 active:opacity-70"
+                  className="text-[11px] font-semibold text-red-400 transition-opacity duration-150 active:opacity-70"
                 >
                   Remove
                 </button>
@@ -246,7 +248,7 @@ export default function SettingsPanel({
             <button
               onClick={handleSaveKey}
               disabled={isSaving || !inputValue.trim()}
-              className="flex h-11 w-full items-center justify-center rounded-full bg-white text-[13px] font-bold text-black shadow-[0_10px_28px_rgba(0,0,0,.32),inset_0_2px_0_rgba(255,255,255,.95)] active:scale-[.97] disabled:opacity-45 transition-colors duration-150"
+              className="flex h-12 w-full items-center justify-center rounded-full bg-white text-[14px] font-semibold text-black shadow-[0_12px_30px_rgba(0,0,0,.34),inset_0_2px_0_rgba(255,255,255,.95),inset_0_-4px_8px_rgba(0,0,0,.16)] active:scale-[.97] disabled:opacity-45 transition-[transform,opacity] duration-150"
             >
               {isSaving ? (
                 <span className="size-4 animate-spin rounded-full border-2 border-black/20 border-t-black" />
@@ -270,7 +272,7 @@ export default function SettingsPanel({
           {/* Model — only when the active tab's provider has a key */}
           {currentKey && (
             <div className="flex flex-col gap-2.5">
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-white/42">
+              <p className="text-[11px] font-black uppercase tracking-[0.16em] text-white/42">
                 Model
               </p>
               <div className="flex flex-col gap-1.5">
@@ -286,7 +288,7 @@ export default function SettingsPanel({
                           model: m.id,
                         })
                       }
-                      className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-colors ${
+                      className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-colors active:scale-[.97] ${
                         active
                           ? "border-white/28 bg-white/14"
                           : "border-white/10 bg-white/5"
@@ -330,7 +332,7 @@ export default function SettingsPanel({
           {/* Image quality — only when the active tab's provider has a key */}
           {currentKey && (
             <div className="flex flex-col gap-2.5">
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-white/42">
+              <p className="text-[11px] font-black uppercase tracking-[0.16em] text-white/42">
                 Image quality sent to API
               </p>
               {(() => {

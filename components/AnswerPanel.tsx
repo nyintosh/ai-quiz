@@ -34,8 +34,7 @@ export default function AnswerPanel({
       className={`glass-panel fixed left-4 right-4 bottom-[max(16px,env(safe-area-inset-bottom))] z-30 flex max-h-[64dvh] flex-col overflow-hidden rounded-[20px] text-white touch-pan-y lg:inset-y-8 lg:left-auto lg:right-8 lg:bottom-8 lg:max-h-none lg:w-84 lg:rounded-[20px] ${show ? "translate-y-0 opacity-100 lg:translate-x-0" : "translate-y-[calc(100%+32px)] opacity-0 lg:translate-x-[calc(100%+16px)] lg:translate-y-0"}`}
     >
       {/* Header — sticky */}
-      <div className="sticky top-0 z-10 shrink-0 -mb-px bg-[linear-gradient(to_bottom,rgba(20,22,30,.92),rgba(20,22,30,.72)_72%,transparent)] px-4 pb-3 pt-2 backdrop-blur-xl">
-        <div className="mx-auto mb-3 h-1 w-9 rounded-full bg-white/26" />
+      <div className="sticky top-0 z-10 shrink-0 -mb-px bg-[linear-gradient(to_bottom,rgba(20,22,30,.92),rgba(20,22,30,.72)_72%,transparent)] px-5 pb-3 pt-4 backdrop-blur-xl">
         <div className="flex items-center gap-2">
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/42">
@@ -72,9 +71,9 @@ export default function AnswerPanel({
       </div>
 
       {/* Scrollable content */}
-      <div className="overflow-y-auto overscroll-contain px-4 pt-3">
+      <div className="overflow-y-auto overscroll-contain px-5 pt-4">
         {status === "processing" && (
-          <div className="sheet-rise space-y-2.5 pb-4">
+          <div className="sheet-rise space-y-2.5 pb-5">
             <div className="h-4 w-11/12 animate-pulse rounded-full bg-white/16" />
             <div className="h-4 w-2/3 animate-pulse rounded-full bg-white/12" />
             <div className="space-y-1.5 pt-1">
@@ -108,7 +107,7 @@ export default function AnswerPanel({
         )}
 
         {result && (
-          <div className="sheet-rise space-y-3.5 pb-4">
+          <div className="sheet-rise space-y-3.5 pb-5">
             <p className="text-[15px] font-semibold leading-snug text-white">
               {result.question}
             </p>
@@ -157,7 +156,7 @@ export default function AnswerPanel({
 
       {/* Sticky footer — Scan Next (manual mode only) */}
       {status !== "processing" && !autoScan && (
-        <div className="shrink-0 px-4 pb-4 pt-2">
+        <div className="shrink-0 px-5 pb-5 pt-3">
           <button
             onClick={onDismiss}
             className="h-12 w-full rounded-full bg-white text-[14px] font-semibold text-black shadow-[0_12px_30px_rgba(0,0,0,.34),inset_0_2px_0_rgba(255,255,255,.95),inset_0_-4px_8px_rgba(0,0,0,.16)] transition-transform duration-150 active:scale-[.97]"
