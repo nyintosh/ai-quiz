@@ -112,7 +112,7 @@ export default function CameraView({
             </p>
             <button
               onClick={() => startCamera()}
-              className="h-11 rounded-full bg-white px-6 text-sm font-bold text-black shadow-lg active:scale-[.98]"
+              className="h-11 rounded-full bg-white px-6 text-sm font-bold text-black shadow-lg active:scale-[.97]"
             >
               Retry camera
             </button>
@@ -172,13 +172,13 @@ export default function CameraView({
             <div className="glass-control glass-segment flex rounded-full p-0.5">
               <button
                 onClick={() => setAutoScan(false)}
-                className={`h-8 rounded-full px-4 text-[12px] font-semibold transition-all duration-200 ${!autoScan ? "bg-white text-black shadow-[0_6px_14px_rgba(0,0,0,.22)]" : "text-white/70"}`}
+                className={`h-8 rounded-full px-4 text-[12px] font-semibold transition-colors duration-200 ${!autoScan ? "bg-white text-black shadow-[0_6px_14px_rgba(0,0,0,.22)]" : "text-white/70"}`}
               >
                 Manual
               </button>
               <button
                 onClick={() => setAutoScan(true)}
-                className={`h-8 rounded-full px-4 text-[12px] font-semibold transition-all duration-200 ${autoScan ? "bg-white text-black shadow-[0_6px_14px_rgba(0,0,0,.22)]" : "text-white/70"}`}
+                className={`h-8 rounded-full px-4 text-[12px] font-semibold transition-colors duration-200 ${autoScan ? "bg-white text-black shadow-[0_6px_14px_rgba(0,0,0,.22)]" : "text-white/70"}`}
               >
                 Auto
               </button>

@@ -114,9 +114,9 @@ export default function SettingsPanel({
   const hasAnyKey = PROVIDERS.some((p) => keys[p.id] !== null);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/65 backdrop-blur-sm sm:items-center">
-      <div className="glass-panel sheet-rise w-full max-w-sm rounded-t-4xl sm:rounded-[28px] flex flex-col max-h-[92dvh] overflow-hidden">
-        <div className="overflow-y-auto px-6 pt-6 pb-[max(28px,env(safe-area-inset-bottom))] sm:pb-7 flex flex-col gap-5">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/65 backdrop-blur-sm px-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:items-center sm:px-0 sm:pb-0">
+      <div className="glass-panel sheet-rise w-full max-w-sm rounded-[28px] flex flex-col max-h-[92dvh] overflow-hidden">
+        <div className="overflow-y-auto px-6 pt-6 pb-7 flex flex-col gap-5">
           {/* Header */}
           {hasExistingKey ? (
             <div className="flex items-center justify-between">
@@ -174,7 +174,7 @@ export default function SettingsPanel({
                 <button
                   key={p.id}
                   onClick={() => handleProviderTab(p.id)}
-                  className={`relative flex-1 h-9 rounded-full text-[12px] font-bold transition-all ${
+                  className={`relative flex-1 h-9 rounded-full text-[12px] font-bold transition-colors duration-150 ${
                     active
                       ? "bg-white text-black shadow-[0_6px_16px_rgba(0,0,0,.22)]"
                       : "text-white/65"
@@ -236,7 +236,7 @@ export default function SettingsPanel({
             <button
               onClick={handleSaveKey}
               disabled={isSaving || !inputValue.trim()}
-              className="flex h-11 w-full items-center justify-center rounded-full bg-white text-[13px] font-bold text-black shadow-[0_10px_28px_rgba(0,0,0,.32),inset_0_2px_0_rgba(255,255,255,.95)] active:scale-[.99] disabled:opacity-45 transition-all"
+              className="flex h-11 w-full items-center justify-center rounded-full bg-white text-[13px] font-bold text-black shadow-[0_10px_28px_rgba(0,0,0,.32),inset_0_2px_0_rgba(255,255,255,.95)] active:scale-[.97] disabled:opacity-45 transition-colors duration-150"
             >
               {isSaving ? (
                 <span className="size-4 animate-spin rounded-full border-2 border-black/20 border-t-black" />

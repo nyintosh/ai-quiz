@@ -25,7 +25,7 @@ export default function AnswerPanel({ result, status, onDismiss }: Props) {
   return (
     <section
       aria-label="Answer"
-      className={`glass-panel fixed inset-x-0 bottom-0 z-30 max-h-[64dvh] overflow-y-auto overscroll-contain rounded-t-[20px] px-4 pb-[calc(78px+env(safe-area-inset-bottom))] text-white touch-pan-y lg:inset-y-8 lg:left-auto lg:right-8 lg:max-h-none lg:w-84 lg:rounded-[20px] lg:px-4 lg:pb-20 ${show ? "translate-y-0 opacity-100 lg:translate-x-0" : "translate-y-[calc(100%+16px)] opacity-0 lg:translate-x-[calc(100%+16px)] lg:translate-y-0"}`}
+      className={`glass-panel fixed left-4 right-4 bottom-[max(16px,env(safe-area-inset-bottom))] z-30 max-h-[64dvh] overflow-y-auto overscroll-contain rounded-[20px] px-4 pb-20 text-white touch-pan-y lg:inset-y-8 lg:left-auto lg:right-8 lg:bottom-8 lg:max-h-none lg:w-84 lg:rounded-[20px] lg:px-4 lg:pb-20 ${show ? "translate-y-0 opacity-100 lg:translate-x-0" : "translate-y-[calc(100%+32px)] opacity-0 lg:translate-x-[calc(100%+16px)] lg:translate-y-0"}`}
     >
       <div className="sticky top-0 z-10 -mx-4 mb-3 bg-[linear-gradient(to_bottom,rgba(20,22,30,.86),rgba(20,22,30,.54)_72%,transparent)] px-4 pb-3 pt-2 backdrop-blur-xl">
         <div className="mx-auto mb-3 h-1 w-9 rounded-full bg-white/26" />
@@ -125,7 +125,7 @@ export default function AnswerPanel({ result, status, onDismiss }: Props) {
       )}
 
       {status !== "processing" && (
-        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-4 py-[max(16px,env(safe-area-inset-bottom))] lg:absolute">
+        <div className="pointer-events-none fixed left-4 right-4 bottom-[max(16px,env(safe-area-inset-bottom))] z-40 py-3 lg:absolute lg:inset-x-0 lg:bottom-0 lg:px-4 lg:py-4">
           <button
             onClick={onDismiss}
             className="pointer-events-auto h-12 w-full rounded-full bg-white text-[14px] font-semibold text-black shadow-[0_12px_30px_rgba(0,0,0,.34),inset_0_2px_0_rgba(255,255,255,.95),inset_0_-4px_8px_rgba(0,0,0,.16)] transition-transform duration-150 active:scale-[.99]"
