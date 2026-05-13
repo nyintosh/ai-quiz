@@ -179,7 +179,7 @@ export default function CameraView({
             <div className="glass-control glass-segment relative flex rounded-full p-0.5">
               {/* Sliding pill */}
               <div
-                className="absolute top-0.5 bottom-0.5 w-[calc(50%-2px)] rounded-full bg-white shadow-[0_6px_14px_rgba(0,0,0,.22)]"
+                className="absolute top-0.5 bottom-0.5 w-[calc(50%-4px)] rounded-full bg-white shadow-[0_6px_14px_rgba(0,0,0,.22)]"
                 style={{
                   left: autoScan ? "calc(50% + 1px)" : "2px",
                   transition: "left 220ms cubic-bezier(0.22,1,0.36,1)",
@@ -187,13 +187,13 @@ export default function CameraView({
               />
               <button
                 onClick={() => onAutoScanChange(false)}
-                className={`relative z-10 h-8 rounded-full px-4 text-[12px] font-semibold transition-colors duration-200 ${!autoScan ? "text-black" : "text-white/70"}`}
+                className={`relative z-10 h-8 min-w-20 rounded-full pl-4 pr-6 text-center text-[12px] font-semibold transition-colors duration-200 ${!autoScan ? "text-black" : "text-white/70"}`}
               >
                 Manual
               </button>
               <button
                 onClick={() => onAutoScanChange(true)}
-                className={`relative z-10 h-8 rounded-full px-4 text-[12px] font-semibold transition-colors duration-200 ${autoScan ? "text-black" : "text-white/70"}`}
+                className={`relative z-10 h-8 min-w-20 rounded-full pl-4 pr-4 text-center text-[12px] font-semibold transition-colors duration-200 ${autoScan ? "text-black" : "text-white/70"}`}
               >
                 Auto
               </button>

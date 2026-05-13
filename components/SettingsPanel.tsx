@@ -111,11 +111,9 @@ export default function SettingsPanel({
     setKeyError(null);
   };
 
-  const hasAnyKey = PROVIDERS.some((p) => keys[p.id] !== null);
-
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/65 backdrop-blur-sm px-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:items-center sm:px-0 sm:pb-0">
-      <div className="glass-panel sheet-rise w-full max-w-sm rounded-[28px] flex flex-col max-h-[92dvh] overflow-hidden">
+      <div className="glass-panel sheet-rise w-full sm:max-w-sm rounded-[28px] flex flex-col max-h-[92dvh] overflow-hidden">
         <div className="overflow-y-auto px-6 pt-6 pb-7 flex flex-col gap-5">
           {/* Header */}
           {hasExistingKey ? (
@@ -167,7 +165,9 @@ export default function SettingsPanel({
 
           {/* Provider tabs */}
           {(() => {
-            const activeIdx = PROVIDERS.findIndex((p) => p.id === activeProvider);
+            const activeIdx = PROVIDERS.findIndex(
+              (p) => p.id === activeProvider,
+            );
             const n = PROVIDERS.length;
             return (
               <div className="glass-control glass-segment relative flex rounded-full p-1">
@@ -267,8 +267,8 @@ export default function SettingsPanel({
             </a>
           </div>
 
-          {/* Model — settings mode OR first-run after key saved */}
-          {(hasExistingKey || hasAnyKey) && (
+          {/* Model — only when the active tab's provider has a key */}
+          {currentKey && (
             <div className="flex flex-col gap-2.5">
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-white/42">
                 Model
@@ -327,14 +327,16 @@ export default function SettingsPanel({
             </div>
           )}
 
-          {/* Image quality — settings mode only */}
-          {hasExistingKey && (
+          {/* Image quality — only when the active tab's provider has a key */}
+          {currentKey && (
             <div className="flex flex-col gap-2.5">
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-white/42">
                 Image quality sent to API
               </p>
               {(() => {
-                const activeIdx = QUALITIES.findIndex((q) => q.id === config.imageQuality);
+                const activeIdx = QUALITIES.findIndex(
+                  (q) => q.id === config.imageQuality,
+                );
                 const n = QUALITIES.length;
                 return (
                   <div className="glass-control glass-segment relative flex rounded-full p-1">
