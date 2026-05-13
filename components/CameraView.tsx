@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useCamera } from "@/hooks/useCamera";
 import { useFrameCapture } from "@/hooks/useFrameCapture";
 import type { QuizStatus } from "@/hooks/useQuizAI";
@@ -8,6 +8,8 @@ import type { QuizStatus } from "@/hooks/useQuizAI";
 interface Props {
   onFrame: (base64: string) => void;
   status: QuizStatus;
+  autoScan: boolean;
+  onAutoScanChange: (v: boolean) => void;
   onDismiss: () => void;
   onSettings: () => void;
   captureConfig: { maxW: number; jpegQuality: number };
@@ -25,12 +27,13 @@ const statusText: Record<QuizStatus, string> = {
 export default function CameraView({
   onFrame,
   status,
+  autoScan,
+  onAutoScanChange,
   onDismiss,
   onSettings,
   captureConfig,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [autoScan, setAutoScan] = useState(false);
   const { videoRef, isReady, error, startCamera } = useCamera();
 
   const dismissTransientResult = useCallback(() => {
@@ -44,15 +47,17 @@ export default function CameraView({
 
   const analyzeFrame = useCallback(
     (base64: string) => {
+      // In auto mode, clear a previous answer before sending the new frame
       if (
         status === "error" ||
         status === "no-question" ||
-        status === "invalid-key"
+        status === "invalid-key" ||
+        (autoScan && status === "answered")
       )
         onDismiss();
       onFrame(base64);
     },
-    [onDismiss, onFrame, status],
+    [onDismiss, onFrame, status, autoScan],
   );
 
   const { start, stop, captureNow } = useFrameCapture(
@@ -69,8 +74,9 @@ export default function CameraView({
   }, []);
 
   useEffect(() => {
-    const shouldAutoScan =
-      isReady && autoScan && status !== "processing" && status !== "answered";
+    // In auto mode, keep scanning even when answered — the frame diff detector
+    // won't re-trigger on the same scene, so the answer stays until the scene changes.
+    const shouldAutoScan = isReady && autoScan && status !== "processing";
 
     if (shouldAutoScan) {
       start();
@@ -168,17 +174,26 @@ export default function CameraView({
 
           <div className="pointer-events-none absolute inset-x-5 top-[13dvh] h-[43dvh] rounded-[26px] border border-white/26 bg-white/[0.012] shadow-[inset_0_1px_0_rgba(255,255,255,.2),inset_0_-1px_0_rgba(0,0,0,.28),0_0_0_999px_rgba(0,0,0,.12)] lg:left-8 lg:right-98 lg:top-[17dvh] lg:h-[58dvh]" />
 
+          {/* Manual / Auto toggle */}
           <div className="control-rise absolute inset-x-0 top-[calc(56dvh-60px)] z-10 flex justify-center px-5 lg:left-8 lg:right-98 lg:top-[calc(75dvh-60px)]">
-            <div className="glass-control glass-segment flex rounded-full p-0.5">
+            <div className="glass-control glass-segment relative flex rounded-full p-0.5">
+              {/* Sliding pill */}
+              <div
+                className="absolute top-0.5 bottom-0.5 w-[calc(50%-2px)] rounded-full bg-white shadow-[0_6px_14px_rgba(0,0,0,.22)]"
+                style={{
+                  left: autoScan ? "calc(50% + 1px)" : "2px",
+                  transition: "left 220ms cubic-bezier(0.22,1,0.36,1)",
+                }}
+              />
               <button
-                onClick={() => setAutoScan(false)}
-                className={`h-8 rounded-full px-4 text-[12px] font-semibold transition-colors duration-200 ${!autoScan ? "bg-white text-black shadow-[0_6px_14px_rgba(0,0,0,.22)]" : "text-white/70"}`}
+                onClick={() => onAutoScanChange(false)}
+                className={`relative z-10 h-8 rounded-full px-4 text-[12px] font-semibold transition-colors duration-200 ${!autoScan ? "text-black" : "text-white/70"}`}
               >
                 Manual
               </button>
               <button
-                onClick={() => setAutoScan(true)}
-                className={`h-8 rounded-full px-4 text-[12px] font-semibold transition-colors duration-200 ${autoScan ? "bg-white text-black shadow-[0_6px_14px_rgba(0,0,0,.22)]" : "text-white/70"}`}
+                onClick={() => onAutoScanChange(true)}
+                className={`relative z-10 h-8 rounded-full px-4 text-[12px] font-semibold transition-colors duration-200 ${autoScan ? "text-black" : "text-white/70"}`}
               >
                 Auto
               </button>

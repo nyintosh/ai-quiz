@@ -166,28 +166,38 @@ export default function SettingsPanel({
           )}
 
           {/* Provider tabs */}
-          <div className="glass-control glass-segment flex rounded-full p-1">
-            {PROVIDERS.map((p) => {
-              const active = activeProvider === p.id;
-              const hasKey = keys[p.id] !== null;
-              return (
-                <button
-                  key={p.id}
-                  onClick={() => handleProviderTab(p.id)}
-                  className={`relative flex-1 h-9 rounded-full text-[12px] font-bold transition-colors duration-150 ${
-                    active
-                      ? "bg-white text-black shadow-[0_6px_16px_rgba(0,0,0,.22)]"
-                      : "text-white/65"
-                  }`}
-                >
-                  {p.label}
-                  {hasKey && (
-                    <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-emerald-400" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
+          {(() => {
+            const activeIdx = PROVIDERS.findIndex((p) => p.id === activeProvider);
+            const n = PROVIDERS.length;
+            return (
+              <div className="glass-control glass-segment relative flex rounded-full p-1">
+                <div
+                  className="absolute top-1 bottom-1 rounded-full bg-white shadow-[0_6px_16px_rgba(0,0,0,.22)]"
+                  style={{
+                    width: `calc((100% - 8px) / ${n})`,
+                    left: `calc(4px + ${activeIdx} * (100% - 8px) / ${n})`,
+                    transition: "left 220ms cubic-bezier(0.22,1,0.36,1)",
+                  }}
+                />
+                {PROVIDERS.map((p) => {
+                  const active = activeProvider === p.id;
+                  const hasKey = keys[p.id] !== null;
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => handleProviderTab(p.id)}
+                      className={`relative z-10 flex-1 h-9 rounded-full text-[12px] font-bold transition-colors duration-200 ${active ? "text-black" : "text-white/65"}`}
+                    >
+                      {p.label}
+                      {hasKey && (
+                        <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-emerald-400" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            );
+          })()}
 
           {/* API Key for active provider */}
           <div className="flex flex-col gap-2.5">
@@ -224,7 +234,7 @@ export default function SettingsPanel({
               autoComplete="off"
               autoCorrect="off"
               spellCheck={false}
-              className="w-full rounded-2xl border border-white/22 bg-white/[0.07] px-4 py-3 font-mono text-[12px] text-white placeholder:text-white/28 outline-none focus:border-white/40 focus:bg-white/10 transition-colors"
+              className="w-full rounded-2xl border border-white/22 bg-white/[0.07] px-4 py-2.5 font-mono text-[16px] text-white placeholder:text-white/28 outline-none focus:border-white/40 focus:bg-white/10 transition-colors"
             />
 
             {keyError && (
@@ -323,21 +333,34 @@ export default function SettingsPanel({
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-white/42">
                 Image quality sent to API
               </p>
-              <div className="glass-control glass-segment flex rounded-full p-1">
-                {QUALITIES.map((q) => (
-                  <button
-                    key={q.id}
-                    onClick={() => onUpdateConfig({ imageQuality: q.id })}
-                    className={`flex-1 h-9 rounded-full text-[12px] font-bold transition ${
-                      config.imageQuality === q.id
-                        ? "bg-white text-black shadow-[0_6px_16px_rgba(0,0,0,.22)]"
-                        : "text-white/65"
-                    }`}
-                  >
-                    {q.label}
-                  </button>
-                ))}
-              </div>
+              {(() => {
+                const activeIdx = QUALITIES.findIndex((q) => q.id === config.imageQuality);
+                const n = QUALITIES.length;
+                return (
+                  <div className="glass-control glass-segment relative flex rounded-full p-1">
+                    <div
+                      className="absolute top-1 bottom-1 rounded-full bg-white shadow-[0_6px_16px_rgba(0,0,0,.22)]"
+                      style={{
+                        width: `calc((100% - 8px) / ${n})`,
+                        left: `calc(4px + ${activeIdx} * (100% - 8px) / ${n})`,
+                        transition: "left 220ms cubic-bezier(0.22,1,0.36,1)",
+                      }}
+                    />
+                    {QUALITIES.map((q) => {
+                      const active = config.imageQuality === q.id;
+                      return (
+                        <button
+                          key={q.id}
+                          onClick={() => onUpdateConfig({ imageQuality: q.id })}
+                          className={`relative z-10 flex-1 h-9 rounded-full text-[12px] font-bold transition-colors duration-200 ${active ? "text-black" : "text-white/65"}`}
+                        >
+                          {q.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
               <p className="text-[11px] text-white/50">
                 {QUALITIES.find((q) => q.id === config.imageQuality)?.desc}
               </p>

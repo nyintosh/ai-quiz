@@ -12,6 +12,7 @@ export default function Home() {
   const { keys, isLoading, saveKey, clearKey } = useApiKeys();
   const { config, updateConfig } = useConfig();
   const [showSettings, setShowSettings] = useState(false);
+  const [autoScan, setAutoScan] = useState(false);
 
   const activeKey = keys[config.provider];
   const { result, status, analyze, reset } = useQuizAI(
@@ -54,8 +55,15 @@ export default function Home() {
         onDismiss={reset}
         onSettings={() => setShowSettings(true)}
         captureConfig={QUALITY_PARAMS[config.imageQuality]}
+        autoScan={autoScan}
+        onAutoScanChange={setAutoScan}
       />
-      <AnswerPanel result={result} status={status} onDismiss={reset} />
+      <AnswerPanel
+        result={result}
+        status={status}
+        autoScan={autoScan}
+        onDismiss={reset}
+      />
 
       {showSettings && (
         <SettingsPanel
