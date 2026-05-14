@@ -31,7 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full overflow-hidden">
-      <body className="h-full overflow-hidden bg-slate-950 text-slate-50 antialiased">
+      <body className="h-full overflow-hidden bg-[#07080b] text-slate-50 antialiased">
         {children}
       </body>
     </html>

@@ -31,13 +31,6 @@ body {
     }
 }
 
-@media (display-mode: standalone) {
-    html,
-    body {
-        height: 100svh;
-    }
-}
-
 button {
     -webkit-tap-highlight-color: transparent;
 }
