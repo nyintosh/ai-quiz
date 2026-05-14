@@ -31,7 +31,7 @@ export default function AnswerPanel({
   return (
     <section
       aria-label="Answer"
-      className={`glass-panel fixed left-4 right-4 bottom-[max(16px,env(safe-area-inset-bottom))] z-30 flex max-h-[64dvh] flex-col overflow-hidden rounded-[20px] text-white touch-pan-y lg:inset-y-8 lg:left-auto lg:right-8 lg:bottom-8 lg:max-h-none lg:w-84 lg:rounded-[20px] ${show ? "translate-y-0 opacity-100 lg:translate-x-0" : "translate-y-[calc(100%+32px)] opacity-0 lg:translate-x-[calc(100%+16px)] lg:translate-y-0"}`}
+      className={`glass-panel fixed left-0 right-0 bottom-0 z-30 flex max-h-[64dvh] flex-col overflow-hidden rounded-t-[20px] text-white touch-pan-y pb-[env(safe-area-inset-bottom)] lg:inset-y-8 lg:left-auto lg:right-8 lg:bottom-8 lg:max-h-none lg:w-84 lg:rounded-[20px] lg:pb-0 ${show ? "translate-y-0 opacity-100 lg:translate-x-0" : "translate-y-[calc(100%+32px)] opacity-0 lg:translate-x-[calc(100%+16px)] lg:translate-y-0"}`}
     >
       {/* Header — sticky */}
       <div className="sticky top-0 z-10 shrink-0 -mb-px bg-[linear-gradient(to_bottom,rgba(20,22,30,.92),rgba(20,22,30,.72)_72%,transparent)] px-5 pb-3 pt-4 backdrop-blur-xl">

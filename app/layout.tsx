@@ -2,8 +2,21 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+  ),
   title: "Quiz AI",
   description: "AI-powered live camera quiz solver",
+  keywords: [
+    "quiz",
+    "AI",
+    "camera",
+    "solver",
+    "homework",
+    "Claude",
+    "Gemini",
+    "GPT",
+  ],
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -12,6 +25,22 @@ export const metadata: Metadata = {
   },
   icons: {
     apple: "/icons/icon-192.png",
+  },
+  openGraph: {
+    title: "Quiz AI",
+    description: "AI-powered live camera quiz solver",
+    type: "website",
+    locale: "en_US",
+    siteName: "Quiz AI",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Quiz AI",
+    description: "AI-powered live camera quiz solver",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
