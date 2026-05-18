@@ -31,23 +31,29 @@ export default function AnswerPanel({
   return (
     <section
       aria-label="Answer"
-      className={`glass-panel fixed left-4 right-4 bottom-[max(16px,env(safe-area-inset-bottom))] z-30 flex max-h-[64dvh] flex-col overflow-hidden rounded-[28px] text-white touch-pan-y lg:inset-y-8 lg:left-auto lg:right-8 lg:bottom-8 lg:max-h-none lg:w-84 ${show ? "translate-y-0 opacity-100 lg:translate-x-0" : "translate-y-[calc(100%+24px)] opacity-0 lg:translate-x-[calc(100%+16px)] lg:translate-y-0"}`}
+      className={`glass-panel fixed left-4 right-4 bottom-[max(16px,env(safe-area-inset-bottom))] z-30 flex max-h-[64dvh] flex-col overflow-hidden rounded-[28px] text-white touch-pan-y lg:inset-y-8 lg:left-auto lg:right-8 lg:bottom-8 lg:max-h-none lg:w-84 transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${show ? "translate-y-0 opacity-100 lg:translate-x-0" : "translate-y-[calc(100%+24px)] opacity-0 lg:translate-x-[calc(100%+16px)] lg:translate-y-0"}`}
     >
       {/* Header — sticky */}
-      <div className="sticky top-0 z-10 shrink-0 -mb-px bg-[linear-gradient(to_bottom,rgba(20,22,30,.92),rgba(20,22,30,.72)_72%,transparent)] px-5 pb-3 pt-4 backdrop-blur-xl">
-        <div className="flex items-center gap-2">
-          <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/42">
-              Quiz AI
-            </p>
-            <h1 className="mt-0.5 truncate text-[17px] font-semibold leading-tight tracking-normal transition-opacity duration-200">
-              {result
-                ? `Answer ${result.answer}`
-                : status === "processing"
-                  ? "Reading"
-                  : "Try another angle"}
-            </h1>
-          </div>
+      <div className="shrink-0 -mb-px px-5 pb-3 pt-4 bg-[linear-gradient(to_bottom,rgba(20,22,30,.92),rgba(20,22,30,.72)_72%,transparent)] backdrop-blur-xl">
+        <div className="flex items-center gap-2.5">
+          {/* State indicator */}
+          {result && (
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-400/22 ring-1 ring-emerald-400/30 text-[14px] font-black text-emerald-300">
+              {result.answer}
+            </span>
+          )}
+          {status === "processing" && (
+            <span className="size-4 shrink-0 animate-spin rounded-full border-2 border-white/20 border-t-white/70" />
+          )}
+
+          <h1 className="min-w-0 flex-1 truncate text-[17px] font-bold leading-tight tracking-normal">
+            {result
+              ? "Answer ready"
+              : status === "processing"
+                ? "Reading…"
+                : "Try another angle"}
+          </h1>
+
           {status !== "processing" && (
             <button
               onClick={onDismiss}
@@ -71,7 +77,7 @@ export default function AnswerPanel({
       </div>
 
       {/* Scrollable content */}
-      <div className="overflow-y-auto overscroll-contain px-5 pt-4">
+      <div className="overflow-y-auto overscroll-contain px-5 pt-3">
         {status === "processing" && (
           <div className="sheet-rise space-y-2.5 pb-5">
             <div className="h-4 w-11/12 animate-pulse rounded-full bg-white/16" />
@@ -107,8 +113,8 @@ export default function AnswerPanel({
         )}
 
         {result && (
-          <div className="sheet-rise space-y-3.5 pb-5">
-            <p className="text-[15px] font-semibold leading-snug text-white">
+          <div className="sheet-rise space-y-3 pb-5">
+            <p className="text-[14px] font-medium leading-normal text-white/80">
               {result.question}
             </p>
 
@@ -126,7 +132,7 @@ export default function AnswerPanel({
                     }`}
                   >
                     <span
-                      className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[12px] font-semibold transition-colors duration-200 ${
+                      className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ${
                         isCorrect
                           ? "bg-emerald-200 text-emerald-950"
                           : "bg-white/16 text-white"
@@ -134,7 +140,7 @@ export default function AnswerPanel({
                     >
                       {letter}
                     </span>
-                    <span className="min-w-0 flex-1 leading-relaxed">
+                    <span className="min-w-0 flex-1 leading-snug">
                       {optionText(option)}
                     </span>
                   </li>
@@ -142,11 +148,11 @@ export default function AnswerPanel({
               })}
             </ul>
 
-            <div className="rounded-2xl border border-white/12 bg-black/18 p-3 shadow-inner transition-colors duration-200">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/42">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.05] px-3 py-2.5">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/38">
                 Why
               </p>
-              <p className="mt-1.5 text-[13px] font-medium leading-relaxed text-white/78">
+              <p className="mt-1 text-[12px] font-medium leading-relaxed text-white/65">
                 {result.explanation}
               </p>
             </div>
@@ -156,7 +162,7 @@ export default function AnswerPanel({
 
       {/* Sticky footer — Scan Next (manual mode only) */}
       {status !== "processing" && !autoScan && (
-        <div className="shrink-0 px-5 pb-5 pt-3">
+        <div className="shrink-0 px-5 pb-5 pt-2.5">
           <button
             onClick={onDismiss}
             className="h-12 w-full rounded-full bg-white text-[14px] font-semibold text-black shadow-[0_12px_30px_rgba(0,0,0,.34),inset_0_2px_0_rgba(255,255,255,.95),inset_0_-4px_8px_rgba(0,0,0,.16)] transition-transform duration-150 active:scale-[.97]"
