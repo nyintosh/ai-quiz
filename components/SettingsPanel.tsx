@@ -111,8 +111,9 @@ export default function SettingsPanel({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/65 backdrop-blur-sm px-4 pt-[max(16px,env(safe-area-inset-top))] pb-[max(16px,env(safe-area-inset-bottom))] sm:items-center sm:px-0 sm:pt-0 sm:pb-0">
-      <div className="glass-panel sheet-rise w-full sm:max-w-sm rounded-[28px] flex flex-col max-h-[92dvh] overflow-hidden">
+    <>
+      <div className="fixed inset-0 z-40 bg-black/65 backdrop-blur-sm" />
+      <div className="glass-panel sheet-rise fixed inset-x-4 top-[max(16px,env(safe-area-inset-top))] bottom-[max(16px,env(safe-area-inset-bottom))] z-50 flex flex-col overflow-hidden rounded-[28px] sm:inset-auto sm:left-1/2 sm:top-1/2 sm:w-full sm:max-w-sm sm:max-h-[92dvh] sm:-translate-x-1/2 sm:-translate-y-1/2">
         {/* Sticky header */}
         <div className="shrink-0 -mb-px px-6 pt-5 pb-4 bg-[linear-gradient(to_bottom,rgba(20,22,30,.92),rgba(20,22,30,.72)_72%,transparent)] backdrop-blur-xl">
           {hasExistingKey ? (
@@ -372,6 +373,6 @@ export default function SettingsPanel({
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 }
