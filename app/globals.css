@@ -31,14 +31,15 @@ body {
 }
 
 /* PWA standalone: pin to the actual viewport — avoids the bottom blank
-   that appears when -webkit-fill-available stops short of the home indicator */
+   that appears when -webkit-fill-available stops short of the home indicator.
+   Use 100lvh (largest viewport) since standalone has no dynamic chrome. */
 @media (display-mode: standalone) {
     html,
     body {
         height: 100vh;
-        height: 100dvh;
+        height: 100lvh;
         min-height: 100vh;
-        min-height: 100dvh;
+        min-height: 100lvh;
     }
 }
 

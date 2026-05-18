@@ -95,7 +95,10 @@ export default function CameraView({
   const canScan = isReady && status !== "processing";
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-[#07080b] text-white">
+    <div
+      className="fixed inset-x-0 top-0 overflow-hidden bg-[#07080b] text-white"
+      style={{ bottom: "calc(-1 * env(safe-area-inset-bottom))" }}
+    >
       {error && (
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-5 px-8 text-center">
           <div className="glass-panel flex max-w-sm flex-col items-center gap-4 rounded-[28px] px-6 py-7">
