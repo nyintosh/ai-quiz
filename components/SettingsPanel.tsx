@@ -266,7 +266,7 @@ export default function SettingsPanel({
               rel="noopener noreferrer"
               className={`text-center text-[11px] underline underline-offset-2 transition-colors ${providerMeta.color} opacity-60 hover:opacity-90`}
             >
-              Get a {providerMeta.label} key →
+              Get your {providerMeta.label} key →
             </a>
           </div>
 

@@ -6,13 +6,13 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
   ),
   title: "Quiz AI",
-  description: "AI-powered live camera quiz solver",
+  description: "Check multiple-choice answers with your camera and AI",
   keywords: [
     "quiz",
     "AI",
     "camera",
-    "solver",
-    "homework",
+    "study",
+    "multiple choice",
     "Claude",
     "Gemini",
     "GPT",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Quiz AI",
-    description: "AI-powered live camera quiz solver",
+    description: "Check multiple-choice answers with your camera and AI",
     type: "website",
     locale: "en_US",
     siteName: "Quiz AI",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Quiz AI",
-    description: "AI-powered live camera quiz solver",
+    description: "Check multiple-choice answers with your camera and AI",
   },
   robots: {
     index: true,

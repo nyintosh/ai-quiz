@@ -48,8 +48,15 @@ export default function Image() {
         >
           Quiz AI
         </div>
-        <div style={{ fontSize: 32, color: "#94a3b8", lineHeight: 1.4 }}>
-          AI-powered live camera quiz solver
+        <div
+          style={{
+            fontSize: 32,
+            color: "#94a3b8",
+            lineHeight: 1.4,
+            maxWidth: 640,
+          }}
+        >
+          Check multiple-choice answers with your camera and AI
         </div>
       </div>
     </div>,

@@ -2,7 +2,7 @@
   "id": "/",
   "name": "Quiz AI",
   "short_name": "Quiz AI",
-  "description": "AI-powered live camera quiz solver",
+  "description": "Check multiple-choice answers with your camera and AI",
   "lang": "en",
   "start_url": "/",
   "scope": "/",
