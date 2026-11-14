@@ -17,42 +17,36 @@ export interface ModelOption {
 export const PROVIDER_MODELS: Record<Provider, ModelOption[]> = {
   anthropic: [
     {
-      id: "claude-haiku-4-5",
-      label: "Claude Haiku 4.5",
+      id: "claude-haiku-5-5",
+      label: "Claude Haiku 5.5",
       recommended: true,
-      note: "Best for this app — fast OCR extraction",
+      note: "Best for this app — fast and low cost",
     },
     {
-      id: "claude-sonnet-4-6",
-      label: "Claude Sonnet 4.6",
+      id: "claude-sonnet-5-5",
+      label: "Claude Sonnet 5.5",
       recommended: false,
       note: "Higher accuracy, moderately slower",
     },
     {
-      id: "claude-opus-4-7",
-      label: "Claude Opus 4.7",
+      id: "claude-opus-5-5",
+      label: "Claude Opus 5.5",
       recommended: false,
       note: "Most accurate — slower and expensive",
     },
   ],
   google: [
     {
-      id: "gemini-2.0-flash",
-      label: "Gemini 2.0 Flash",
+      id: "gemini-3.5-flash-lite",
+      label: "Gemini 3.5 Flash-Lite",
       recommended: true,
-      note: "Best for this app — fastest multimodal model",
+      note: "Best for this app — fast and low cost",
     },
     {
-      id: "gemini-1.5-flash",
-      label: "Gemini 1.5 Flash",
+      id: "gemini-3.8-flash",
+      label: "Gemini 3.8 Flash",
       recommended: false,
-      note: "Fast and capable vision model",
-    },
-    {
-      id: "gemini-1.5-pro",
-      label: "Gemini 1.5 Pro",
-      recommended: false,
-      note: "High accuracy, higher cost",
+      note: "Higher accuracy, can be busy at peak times",
     },
   ],
   openai: [
@@ -88,7 +82,7 @@ export const QUALITY_PARAMS: Record<
 
 const DEFAULTS: AppConfig = {
   provider: "anthropic",
-  model: "claude-haiku-4-5",
+  model: "claude-haiku-5-5",
   imageQuality: "balanced",
 };
 

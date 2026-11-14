@@ -29,11 +29,11 @@ type Provider = "anthropic" | "google" | "openai";
 
 const ALLOWED_MODELS: Record<Provider, Set<string>> = {
   anthropic: new Set([
-    "claude-haiku-4-5",
-    "claude-sonnet-4-6",
-    "claude-opus-4-7",
+    "claude-haiku-5-5",
+    "claude-sonnet-5-5",
+    "claude-opus-5-5",
   ]),
-  google: new Set(["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"]),
+  google: new Set(["gemini-3.5-flash-lite", "gemini-3.8-flash"]),
   openai: new Set(["gpt-4o-mini", "gpt-4o"]),
 };
 
@@ -113,8 +113,10 @@ async function analyzeWithAnthropic(
   const client = new Anthropic({ apiKey });
   const response = await client.messages.create({
     model,
-    max_tokens: 160,
-    temperature: 0,
+    // Current Claude models think before answering, and thinking counts toward
+    // max_tokens: low effort keeps it brief, and the headroom keeps the JSON whole.
+    max_tokens: 1024,
+    output_config: { effort: "low" },
     system: SYSTEM_PROMPT,
     messages: [
       {
@@ -132,6 +134,7 @@ async function analyzeWithAnthropic(
       },
     ],
   });
+  if (response.stop_reason === "refusal") return null;
   const text = response.content
     .filter((p) => p.type === "text")
     .map((p) => p.text)
