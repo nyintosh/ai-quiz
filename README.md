@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://ai-quiz-nyintosh.vercel.app"><b>Open the app</b></a>
+  <a href="https://nk-quiz-ai.vercel.app"><b>Open the app</b></a>
   · Runs in the browser and installs as an app · Bring your own API key
 </p>
 
